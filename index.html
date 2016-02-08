@@ -378,18 +378,28 @@ the inspiration to this, and some handy implementation hints, came.
 
     function save(code, name){
       var blob = new Blob([code], { type: 'text/plain' });
+
+      function putFile(file, data) {
+        xhr = new XMLHttpRequest();
+        xhr.open('PUT', file, false);
+        xhr.setRequestHeader('Content-Type', 'text/plain; charset=UTF-8');
+        xhr.send(data);
+      }
+
+      putFile('https://public.databox.me/Public/markdown.md', code)
+
       if(window.saveAs){
-        window.saveAs(blob, name);
+        //window.saveAs(blob, name);
       }else if(navigator.saveBlob){
-        navigator.saveBlob(blob, name);
+        //navigator.saveBlob(blob, name);
       }else{
-        url = URL.createObjectURL(blob);
-        var link = document.createElement("a");
-        link.setAttribute("href",url);
-        link.setAttribute("download",name);
-        var event = document.createEvent('MouseEvents');
-        event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-        link.dispatchEvent(event);
+        //url = URL.createObjectURL(blob);
+        //var link = document.createElement("a");
+        //link.setAttribute("href",url);
+        //link.setAttribute("download",name);
+        //var event = document.createEvent('MouseEvents');
+        //event.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
+        //link.dispatchEvent(event);
       }
     }
 
