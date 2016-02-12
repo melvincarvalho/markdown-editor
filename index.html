@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -278,19 +279,49 @@
 <body>
   <div id="in"><form><textarea id="code">
 
-    ## Solid markdown
-
-    * Ctrl+S / Cmd+S to save the file
-    * Ctrl+Shift+L to login
-    * Drag and drop a file into here to load it
-    * File contents are saved in the URL so you can share files
-
-    ## Saving
-
-    * By default markdown is saved to https://public.databox.me/markdown/default.md
-    * After loggged in markdown is saved to https://public.databox.me/markdown/<sha256(webid)>.md
+# (GitHub-Flavored) Markdown Editor
 
 
+
+## Solid markdown
+
+* Ctrl+S / Cmd+S to save the file
+* Ctrl+Shift+L to login
+* Drag and drop a file into here to load it
+* File contents are saved in the URL so you can share files
+
+## Saving
+
+* By default markdown is saved to https://public.databox.me/markdown/default.md
+* After loggged in markdown is saved to https://public.databox.me/markdown/sha256(webid).txt
+
+
+## Lists
+
+ * foo
+ * bar
+ * baz
+
+And here's some code! :+1:
+
+```javascript
+$(function(){
+  $('div').html('I am a div.');
+});
+```
+
+This is [on GitHub](https://github.com/jbt/markdown-editor) so let me know if I've b0rked it somewhere.
+
+
+Props to Mr. Doob and his [code editor](http://mrdoob.com/projects/code-editor/), from which
+the inspiration to this, and some handy implementation hints, came.
+
+### Stuff used to make this:
+
+ * [markdown-it](https://github.com/markdown-it/markdown-it) for Markdown parsing
+ * [CodeMirror](http://codemirror.net/) for the awesome syntax-highlighted editor
+ * [highlight.js](http://softwaremaniacs.org/soft/highlight/en/) for syntax highlighting in output code blocks
+ * [js-deflate](https://github.com/dankogai/js-deflate) for gzipping of data to make it fit in URLs
 
   </textarea></form></div>
   <div id="out"></div>
