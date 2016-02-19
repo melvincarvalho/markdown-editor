@@ -591,27 +591,32 @@
   };
 
 
+  function loadURI(uri) {
+    var target;
+    if (uri.indexOf('http') !== 0) {
+      target = storage + '.markdown/' + uri;
+    } else {
+      target = uri;
+    }
+    Solid.web.get(target).then(
+      function (meta) {
+        console.log(meta.xhr.status) // HTTP 200 (OK)
+        notie.alert(1, uri + ' loaded successfully!', 1.5);
+        console.log(meta.xhr.response);
+        editor.setValue(meta.xhr.response);
+      }
+    ).catch(function(err){
+      console.log(err) // error object
+      // ...
+    })
+
+  }
+
   var doload = function() {
 
     var file = notie.input('Please enter name of file to load ', 'Submit', 'Cancel', 'filename', 'markdown.txt', function(file){
       //putFile(storage + '.markdown/' + file, code);
-      var target;
-      if (file.indexOf('http') !== 0) {
-        target = storage + '.markdown/' + file;
-      } else {
-        target = file;
-      }
-      Solid.web.get(target).then(
-        function (meta) {
-          console.log(meta.xhr.status) // HTTP 200 (OK)
-          notie.alert(1, file + ' loaded successfully!', 1.5);
-          console.log(meta.xhr.response);
-          editor.setValue(meta.xhr.response);
-        }
-      ).catch(function(err){
-        console.log(err) // error object
-        // ...
-      })
+      loadURI(file);
 
     });
 
@@ -666,6 +671,15 @@
   });
 
 
+  function getParameterByName(name, url) {
+      if (!url) url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, " "));
+  }
 
 
   function updateHash(){
@@ -678,28 +692,36 @@
     );
   }
 
-  if(window.location.hash){
-    var h = window.location.hash.replace(/^#/, '');
-    if(h.slice(0,5) == 'view:'){
-      setOutput(decodeURIComponent(escape(RawDeflate.inflate(atob(h.slice(5))))));
-      document.body.className = 'view';
-    }else{
-      editor.setValue(
-        decodeURIComponent(escape(
-          RawDeflate.inflate(
-            atob(
-              h
+
+  var uri = getParameterByName('uri');
+  if (uri) {
+    loadURI(uri);
+  } else {
+    if(window.location.hash){
+      var h = window.location.hash.replace(/^#/, '');
+      if(h.slice(0,5) == 'view:'){
+        setOutput(decodeURIComponent(escape(RawDeflate.inflate(atob(h.slice(5))))));
+        document.body.className = 'view';
+      }else{
+        editor.setValue(
+          decodeURIComponent(escape(
+            RawDeflate.inflate(
+              atob(
+                h
+              )
             )
-          )
-        ))
-      );
+          ))
+        );
+        update(editor);
+        editor.focus();
+      }
+    }else{
       update(editor);
       editor.focus();
     }
-  }else{
-    update(editor);
-    editor.focus();
+
   }
+
   </script>
 
 </body>
