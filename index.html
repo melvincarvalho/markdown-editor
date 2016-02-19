@@ -615,6 +615,27 @@ the inspiration to this, and some handy implementation hints, came.
   };
 
 
+  var doload = function() {
+
+    var file = notie.input('Please enter name of file to load ', 'Submit', 'Cancel', 'filename', 'markdown.txt', function(file){
+      //putFile(storage + '.markdown/' + file, code);
+      Solid.web.get(storage + '.markdown/' + file ).then(
+        function (meta) {
+          console.log(meta.xhr.status) // HTTP 200 (OK)
+          notie.alert(1, file + ' loaded successfully!', 1.5);
+          console.log(meta.xhr.response);
+          editor.setValue(meta.xhr.response);
+        }
+      ).catch(function(err){
+        console.log(err) // error object
+        // ...
+      })
+
+    });
+
+  }
+
+
   document.getElementById('close-menu').addEventListener('click', function(){
     hideMenu();
   });
@@ -626,6 +647,14 @@ the inspiration to this, and some handy implementation hints, came.
     if(e.keyCode == 76 && (e.ctrlKey || e.metaKey)){
 
       e.shiftKey ? showLogin() : dologin();
+
+      e.preventDefault();
+      return false;
+    }
+
+    if(e.keyCode == 79 && (e.ctrlKey || e.metaKey)){
+
+      doload();
 
       e.preventDefault();
       return false;
