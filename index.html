@@ -3,9 +3,6 @@
 <html>
 <head>
   <title>Markdown Editor</title>
-  <script src="rdflib.js"></script>
-  <script src="solid.js"></script>
-  <script src="sha256.js"></script>
 
   <script src="markdown-it.js"></script>
   <script src="markdown-it-footnote.js"></script>
@@ -361,6 +358,14 @@ the inspiration to this, and some handy implementation hints, came.
       <span>WebID</span>
     </div>
   </div>
+
+
+  <script src="rdflib.js"></script>
+  <script src="solid.js"></script>
+  <script src="sha256.js"></script>
+  <script src="notie.js"></script>
+
+
   <script type="text/javascript">
   var URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
   navigator.saveBlob = navigator.saveBlob || navigator.msSaveBlob || navigator.mozSaveBlob || navigator.webkitSaveBlob;
@@ -484,13 +489,16 @@ the inspiration to this, and some handy implementation hints, came.
       xhr.open('PUT', file, false);
       xhr.setRequestHeader('Content-Type', 'text/plain; charset=UTF-8');
       xhr.send(data);
+      notie.alert(1, file + ' saved successfully!', 1.5);
     }
 
     var file = 'default.txt';
     if (window.user) {
-      file = CryptoJS.SHA256(window.user) + '.txt'
+      var file = notie.input('Please enter name of file to save ', 'Submit', 'Cancel', 'filename', 'markdown.txt', function(file){
+        putFile(storage + '.markdown/' + file, code);
+      });
+      //file = CryptoJS.SHA256(window.user) + '.txt'
     }
-    putFile(storage + '.markdown/' + file, code)
 
     if(window.saveAs){
       //window.saveAs(blob, name);
@@ -544,7 +552,8 @@ the inspiration to this, and some handy implementation hints, came.
     // Get the current user
     Solid.auth.login(authEndpoint).then(function(webid){
       // authentication succeeded; do something with the WebID string
-      alert(webid);
+      notie.alert(1, 'Success!  You are logged in as : ' + webid);
+      hideLogin();
 
       Solid.identity.getProfile(webid).then(function (parsedProfile) {
         console.log('getProfile result: %o', parsedProfile)
@@ -671,5 +680,6 @@ the inspiration to this, and some handy implementation hints, came.
     editor.focus();
   }
   </script>
+
 </body>
 </html>
