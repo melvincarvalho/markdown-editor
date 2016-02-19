@@ -591,8 +591,10 @@
     var file = notie.input('Please enter name of file to load ', 'Submit', 'Cancel', 'filename', 'markdown.txt', function(file){
       //putFile(storage + '.markdown/' + file, code);
       var target;
-      if (!file.indexOf('http') === 0) {
+      if (file.indexOf('http') !== 0) {
         target = storage + '.markdown/' + file;
+      } else {
+        target = file;
       }
       Solid.web.get(target).then(
         function (meta) {
