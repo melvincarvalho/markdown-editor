@@ -495,7 +495,17 @@ the inspiration to this, and some handy implementation hints, came.
     var file = 'default.txt';
     if (window.user) {
       var file = notie.input('Please enter name of file to save ', 'Submit', 'Cancel', 'filename', 'markdown.txt', function(file){
-        putFile(storage + '.markdown/' + file, code);
+        //putFile(storage + '.markdown/' + file, code);
+        Solid.web.put(storage + '.markdown/', code, 'text/plain').then(
+          function (meta) {
+            console.log(meta.xhr.status) // HTTP 200 (OK)
+            notie.alert(1, file + ' saved successfully!', 1.5);
+          }
+        ).catch(function(err){
+          console.log(err) // error object
+          // ...
+        })
+
       });
       //file = CryptoJS.SHA256(window.user) + '.txt'
     }
