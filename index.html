@@ -466,7 +466,8 @@
     if (window.user) {
       var file = notie.input('Please enter name of file to save ', 'Submit', 'Cancel', 'filename', 'markdown.txt', function(file){
         //putFile(storage + '.markdown/' + file, code);
-        Solid.web.put(storage + '.markdown/', code, 'text/plain').then(
+        var target =
+        Solid.web.put(storage + '.markdown/' + file, code, 'text/plain').then(
           function (meta) {
             console.log(meta.xhr.status) // HTTP 200 (OK)
             notie.alert(1, file + ' saved successfully!', 1.5);
