@@ -279,49 +279,49 @@
 <body>
   <div id="in"><form><textarea id="code">
 
-# (GitHub-Flavored) Markdown Editor
+    # (GitHub-Flavored) Markdown Editor
 
 
 
-## Solid markdown
+    ## Solid markdown
 
-* Ctrl+S / Cmd+S to save the file
-* Ctrl+Shift+L to login
-* Drag and drop a file into here to load it
-* File contents are saved in the URL so you can share files
+    * Ctrl+S / Cmd+S to save the file
+    * Ctrl+Shift+L to login
+    * Drag and drop a file into here to load it
+    * File contents are saved in the URL so you can share files
 
-## Saving
+    ## Saving
 
-* By default markdown is saved to https://public.databox.me/markdown/default.md
-* After loggged in markdown is saved to https://public.databox.me/markdown/sha256(webid).txt
-
-
-## Lists
-
- * foo
- * bar
- * baz
-
-And here's some code! :+1:
-
-```javascript
-$(function(){
-  $('div').html('I am a div.');
-});
-```
-
-This is [on GitHub](https://github.com/jbt/markdown-editor) so let me know if I've b0rked it somewhere.
+    * By default markdown is saved to https://public.databox.me/markdown/default.md
+    * After loggged in markdown is saved to https://public.databox.me/markdown/sha256(webid).txt
 
 
-Props to Mr. Doob and his [code editor](http://mrdoob.com/projects/code-editor/), from which
-the inspiration to this, and some handy implementation hints, came.
+    ## Lists
 
-### Stuff used to make this:
+    * foo
+    * bar
+    * baz
 
- * [markdown-it](https://github.com/markdown-it/markdown-it) for Markdown parsing
- * [CodeMirror](http://codemirror.net/) for the awesome syntax-highlighted editor
- * [highlight.js](http://softwaremaniacs.org/soft/highlight/en/) for syntax highlighting in output code blocks
- * [js-deflate](https://github.com/dankogai/js-deflate) for gzipping of data to make it fit in URLs
+    And here's some code! :+1:
+
+    ```javascript
+    $(function(){
+      $('div').html('I am a div.');
+    });
+    ```
+
+    This is [on GitHub](https://github.com/jbt/markdown-editor) so let me know if I've b0rked it somewhere.
+
+
+    Props to Mr. Doob and his [code editor](http://mrdoob.com/projects/code-editor/), from which
+    the inspiration to this, and some handy implementation hints, came.
+
+    ### Stuff used to make this:
+
+    * [markdown-it](https://github.com/markdown-it/markdown-it) for Markdown parsing
+    * [CodeMirror](http://codemirror.net/) for the awesome syntax-highlighted editor
+    * [highlight.js](http://softwaremaniacs.org/soft/highlight/en/) for syntax highlighting in output code blocks
+    * [js-deflate](https://github.com/dankogai/js-deflate) for gzipping of data to make it fit in URLs
 
   </textarea></form></div>
   <div id="out"></div>
@@ -490,7 +490,7 @@ the inspiration to this, and some handy implementation hints, came.
     if (window.user) {
       file = CryptoJS.SHA256(window.user) + '.txt'
     }
-    putFile('https://public.databox.me/markdown/' + file, code)
+    putFile(storage + '.markdown/' + file, code)
 
     if(window.saveAs){
       //window.saveAs(blob, name);
@@ -537,13 +537,57 @@ the inspiration to this, and some handy implementation hints, came.
   }
 
 
-  var Solid = require('solid.js');
+  var Solid = require('solid');
+  var storage;
   authEndpoint = 'https://databox.me/';
   var dologin = function() {
     // Get the current user
-    Solid.auth.login().then(function(webid){
+    Solid.auth.login(authEndpoint).then(function(webid){
       // authentication succeeded; do something with the WebID string
       alert(webid);
+
+      Solid.identity.getProfile(webid).then(function (parsedProfile) {
+        console.log('getProfile result: %o', parsedProfile)
+        console.log('Account storage root: %s', parsedProfile.externalResources.storage) // array of URIs })
+        storage = parsedProfile.externalResources.storage[0];
+        console.log(storage);
+        var containerName = '.markdown/';
+
+        var url = storage + containerName;
+        Solid.web.get(url).then(
+          function(response) {
+            console.log('Raw resource: %s', response.raw())
+          }
+        ).catch(
+          function(err) {
+            console.log(err) // error object
+            // ...
+            var parentDir = 'https://example.org/'
+            var slug = '.markdown'
+            var data = '<#this> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdfs.org/sioc/ns#Space> .'
+            var isContainer = true
+
+            Solid.web.post(storage, data, slug, true).then(
+              function(solidResponse) {
+                console.log(solidResponse)
+                // The resulting object has several useful properties.
+                // See lib/solid-response.js for details
+                // solidResponse.url - value of the Location header
+                // solidResponse.acl - url of acl resource
+                // solidResponse.meta - url of meta resource
+              }
+            ).catch(function(err){
+              console.log(err) // error object
+              console.log(err.status) // contains the error status
+              console.log(err.xhr) // contains the xhr object
+            })
+
+          }
+        )
+
+
+      });
+
       window.user = webid;
     }).catch(function(err) {
       // authentication failed; display some error message
